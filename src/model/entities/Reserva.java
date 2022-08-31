@@ -39,9 +39,18 @@ public class Reserva {
 		return Duration.between(checkin.atStartOfDay(), checkout.atStartOfDay()).toDays();
 	}
 	
-	public void atualizarDatas(LocalDate checkIn, LocalDate checkOut) {
+	public String atualizarDatas(LocalDate checkIn, LocalDate checkOut) {
+		LocalDate agr = LocalDate.now();
+		if (checkin.isBefore(agr) || checkout.isBefore(checkout)) {
+			return "Erro na reserva: as datas para atualização devem ser datas futuras";
+		}
+		if(checkout.isBefore(checkin)) {
+			return "Erro na reserva: a data de checkout deve ser após a data de checkin";
+		}
+		
 		this.checkin = checkIn;
 		this.checkout = checkOut;
+		return null;
 	}
 
 	@Override
