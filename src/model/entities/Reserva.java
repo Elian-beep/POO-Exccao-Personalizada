@@ -5,6 +5,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import model.excepitions.DomainException;
+
 public class Reserva {
 	private Integer numeroQuarto;
 	private LocalDate checkin;
@@ -12,8 +14,10 @@ public class Reserva {
 	
 	public Reserva() {}
 
-	public Reserva(Integer numeroQuarto, LocalDate checkin, LocalDate checkout) {
-		super();
+	public Reserva(Integer numeroQuarto, LocalDate checkin, LocalDate checkout) throws DomainException {
+		if (checkout.isBefore(checkin)) {
+			throw new DomainException("Erro na reserva: a data de checkout deve ser após a data de checkin");
+		}
 		this.numeroQuarto = numeroQuarto;
 		this.checkin = checkin;
 		this.checkout = checkout;
@@ -39,18 +43,17 @@ public class Reserva {
 		return Duration.between(checkin.atStartOfDay(), checkout.atStartOfDay()).toDays();
 	}
 	
-	public String atualizarDatas(LocalDate checkIn, LocalDate checkOut) {
+	public void atualizarDatas(LocalDate checkIn, LocalDate checkOut) throws DomainException {
 		LocalDate agr = LocalDate.now();
-		if (checkin.isBefore(agr) || checkout.isBefore(checkout)) {
-			return "Erro na reserva: as datas para atualização devem ser datas futuras";
+		if (checkin.isBefore(agr) || checkout.isBefore(agr)) {
+			throw new DomainException("Erro na reserva: as datas para atualização devem ser datas futuras");
 		}
 		if(checkout.isBefore(checkin)) {
-			return "Erro na reserva: a data de checkout deve ser após a data de checkin";
+			throw new DomainException("Erro na reserva: a data de checkout deve ser após a data de checkin");
 		}
 		
 		this.checkin = checkIn;
 		this.checkout = checkOut;
-		return null;
 	}
 
 	@Override
